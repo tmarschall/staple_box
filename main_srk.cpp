@@ -11,6 +11,7 @@
 #include "file_input.h"
 #include <string>
 #include <sstream>
+#include <assert.h>
 
 using namespace std;
 
@@ -32,12 +33,14 @@ int main()
   cout << nStaples << endl;
 
   //user options
-  cout << "Start gamma: " ;
+  cout << "Start phi: " ;
   double dStart;
   cin >> dStart;
-  cout << dStart << "\nEnding gamma: ";
+  assert(dStart > 0);
+  cout << dStart << "\nEnding phi: ";
   double  dStop;
   cin >> dStop;
+  assert(dStop >= dStart);
   cout << dStop << "\nStrain Rate: ";
   double dStrainRate;
   cin >> dStrainRate;
@@ -75,12 +78,13 @@ int main()
   unsigned long int nTime;
   if (strFile == "r")
   {
-    cout << "Packing Fraction: ";
-    cin >> dPacking;
-    cout << dPacking << endl;
+    //cout << "Packing Fraction: ";
+    //cin >> dPacking;
+    //cout << dPacking << endl;
+    dPacking = dStop;
     const double pi = 3.141592653589793;
     double dArea = nStaples*(12. + 3.*pi*0.25);
-    dL = sqrt(dArea / 0.2);
+    dL = sqrt(dArea / dStart);
     cout << "Box length L: " << dL << endl;
     dRMax = 0.5;
     dAMax = 2.0;
@@ -101,9 +105,10 @@ int main()
   }
   else
   {
-    cout << "Final Packing Fraction: ";
-    cin >> dPacking;
-    cout << dPacking << endl;
+    //cout << "Final Packing Fraction: ";
+    //cin >> dPacking;
+    //cout << dPacking << endl;
+    dPacking = dStop;
     cout << "Loading file: " << strFile << endl;
     DatFileInput cData(szFile, 0);
     int nRows = cData.getRows();
