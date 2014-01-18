@@ -17,46 +17,75 @@ using namespace std;
 
 const double D_PI = 3.14159265358979;
 
-int main()
+
+// input functions that parse command line argument, then prompt for input if end of cl arguments has been reached
+int int_input(int argc, char* argv[], int argn, char description[] = "")
 {
-  cout << "Data file ('r' for random): ";
-  string strFile;
-  getline(cin, strFile);
+  if (argc > argn) {
+    int input = atoi(argv[argn]);
+    cout << description << ": " << input << endl;
+    return input;
+  }
+  else {
+    int input;
+    cout << description << ": ";
+    cin >> input;
+    cout << input << endl;
+    return input;
+  }
+}
+double float_input(int argc, char* argv[], int argn, char description[] = "")
+{
+  if (argc > argn) {
+    double input = atof(argv[argn]);
+    cout << description << ": " << input << endl;
+    return input;
+  }
+  else {
+    double input;
+    cout << description << ": ";
+    cin >> input;
+    cout << input << endl;
+    return input;
+  }
+}
+string string_input(int argc, char* argv[], int argn, char description[] = "")
+{
+  if (argc > argn) {
+    string input = argv[argn];
+    cout << description << ": " << input << endl;
+    return input;
+  }
+  else {
+    string input;
+    cout << description << ": ";
+    cin >> input;
+    cout << input << endl;
+    return input;
+  }
+}
+
+
+int main(int argc, char* argv[])
+{
+  int argn = 0;
+
+  string strFile = string_input(argc, argv, ++argn, "Data file ('r' for random)");
   const char* szFile = strFile.c_str();
-  cout << strFile << "\nOutput Data Directory (including closing '/'): ";
-  string strDir;
-  getline(cin, strDir);
+  string strDir = string_input(argc, argv, ++argn, "Output Data Directory (including closing '/')");
   const char* szDir = strDir.c_str();
-  cout << strDir << "\nNumber of particles: ";
-  int nStaples;
-  cin >> nStaples;
-  cout << nStaples << endl;
+  int nStaples = int_input(argc, argv, ++argn, "Number of particles");
+ 
 
   //user options
-  cout << "Start phi: " ;
-  double dStart;
-  cin >> dStart;
-  assert(dStart > 0);
-  cout << dStart << "\nEnding phi: ";
-  double  dStop;
-  cin >> dStop;
+  double dStart = float_input(argc, argv, ++argn, "Start phi");
+  double dStop = float_input(argc, argv, ++argn, "Ending phi");
   assert(dStop >= dStart);
-  cout << dStop << "\nStrain Rate: ";
-  double dStrainRate;
-  cin >> dStrainRate;
-  cout << dStrainRate << "\nIntegration step size: ";
-  double dStep;
-  cin >> dStep;
-  cout << dStep << "\nPosition data save rate: ";
-  double dPosSaveRate;
-  cin >> dPosSaveRate;
-  cout << dPosSaveRate << "\nStress data save rate: ";
-  double dStressSaveRate;
-  cin >> dStressSaveRate;
-  cout << dStressSaveRate << "\nDR: ";
-  double dDR;
-  cin >> dDR;
-  cout << dDR << endl;
+  double dStrainRate = float_input(argc, argv, ++argn, "Compression rate");
+  double dStep = float_input(argc, argv, ++argn, "Integration step size");
+  double dPosSaveRate = float_input(argc, argv, ++argn, "Position data save rate");
+  double dStressSaveRate = float_input(argc, argv, ++argn, "Stress data save rate");
+  double dDR = float_input(argc, argv, ++argn, "Cell padding");
 
   if (dStressSaveRate < dStrainRate * dStep)
     dStressSaveRate = dStrainRate * dStep;
@@ -81,6 +110,7 @@ int main()
     //cout << "Packing Fraction: ";
     //cin >> dPacking;
     //cout << dPacking << endl;
+    assert(dStart > 0);
     dPacking = dStop;
     const double pi = 3.141592653589793;
     double dArea = nStaples*(12. + 3.*pi*0.25);
@@ -121,10 +151,6 @@ int main()
     //dPacking = cData.getFloat(0,8);
     dGamma = cData.getFloat(0,9);
     dTotalGamma = cData.getFloat(0,10);
-    if (dTotalGamma < dStart - 0.5*dPosSaveRate || dTotalGamma > dStart + 0.5*dPosSaveRate) {
-      cerr << "Total gamma of file does not match input" << endl;
-      exit(1);
-    }
 
     cData.getColumn(dRad, 1);
     cData.getColumn(dAs, 2);
