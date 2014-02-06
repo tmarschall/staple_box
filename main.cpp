@@ -101,9 +101,9 @@ int main(int argc, char* argv[])
   {
     dPacking = float_input(argc, argv, ++argn, "Packing Fraction");
     const double pi = 3.141592653589793;
-    double dArea = nStaples*(12. + 3.*pi*0.25);
-    if (dPacking > 0.25)
-      dL = sqrt(dArea / 0.25);
+    double dArea = nStaples*(12. + 3.*pi*0.3);
+    if (dPacking > 0.3)
+      dL = sqrt(dArea / 0.3);
     else
       dL = sqrt(dArea / dPacking);
     cout << "Box length L: " << dL << endl;
@@ -185,27 +185,27 @@ int main(int argc, char* argv[])
     if (dPacking > 0.455) {
       (*cStaples).simple_shrink_box(10000, 5e-5, 0.025, 0.45, 10, 50);
       (*cStaples).set_strain(1e-4);
-      (*cStaples).run_strain(0, 10, dStressSaveRate, dPosSaveRate);
+      (*cStaples).run_strain(0, 20, dStressSaveRate, dPosSaveRate);
       (*cStaples).set_gamma(0);
       (*cStaples).set_total_gamma(0);
       (*cStaples).set_strain(0);
       if (dPacking > 0.505) {
 	(*cStaples).simple_shrink_box(10000, 5e-5, 0.025, 0.5, 10, 50);
 	(*cStaples).set_strain(1e-4);
-	(*cStaples).run_strain(0, 10, dStressSaveRate, dPosSaveRate);
+	(*cStaples).run_strain(0, 20, dStressSaveRate, dPosSaveRate);
 	(*cStaples).set_gamma(0);
 	(*cStaples).set_total_gamma(0);
 	(*cStaples).set_strain(0);
 	if (dPacking > 0.545) {
 	  (*cStaples).simple_shrink_box(10000, 2.5e-5, 0.025, 0.54, 10, 50);
-	  (*cStaples).set_strain(1e-4);
+	  (*cStaples).set_strain(5e-5);
 	  (*cStaples).run_strain(0, 10, dStressSaveRate, dPosSaveRate);
 	  (*cStaples).set_gamma(0);
 	  (*cStaples).set_total_gamma(0);
 	  (*cStaples).set_strain(0);
 	  if (dPacking > 0.575) {
 	    (*cStaples).simple_shrink_box(10000, 2.5e-5, 0.025, 0.57, 10, 50);
-	    (*cStaples).set_strain(1e-4);
+	    (*cStaples).set_strain(5e-5);
 	    (*cStaples).run_strain(0, 10, dStressSaveRate, dPosSaveRate);
 	    (*cStaples).set_gamma(0);
 	    (*cStaples).set_total_gamma(0);
