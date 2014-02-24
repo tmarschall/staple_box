@@ -30,6 +30,7 @@ SIMP_EXE=../../exe/staple_simple_srk
 CYC_EXE=../../exe/staple_srk_cycle
 CALC_EXE=../../exe/staple_calc_file
 RELAX_EXE=../../exe/staple_relax
+CHECK_EXE=../../exe/staple_check
 
 #rules:
 
@@ -42,6 +43,7 @@ cycle: $(CYC_EXE)
 prof: $(PROF_EXE)
 calc: $(CALC_EXE)
 relax: $(RELAX_EXE)
+check: $(CHECK_EXE)
 
 ######################
 # compile executable #
@@ -95,6 +97,9 @@ $(PROF_EXE): $(CXXOBJECTS) $(NVCCOBJECTS) main_profile.o
 $(CALC_EXE): $(CXXOBJECTS) $(NVCCOBJECTS) main_calc_file.o
 	$(CXX) -o $(CALC_EXE) main_calc_file.o $(CXXOBJECTS) $(NVCCOBJECTS) $(LDFLAGS)
 
+$(CHECK_EXE): $(CXXOBJECTS) $(NVCCOBJECTS) main_check.o
+	$(CXX) -o $(CHECK_EXE) main_check.o $(CXXOBJECTS) $(NVCCOBJECTS) $(LDFLAGS)
+
 ###################
 # compile objects #
 ###################
@@ -120,6 +125,9 @@ main_srk_cycle.o: main_srk_cycle.cpp staple_box.h
 
 main_calc_file.o: main_calc_file.cpp staple_box.h
 	$(CXX) $(CXXFLAGS) $(CXXINCLUDE) -c main_calc_file.cpp
+
+main_check.o: main_check.cpp staple_box.h
+	$(CXX) $(CXXFLAGS) $(CXXINCLUDE) -c main_check.cpp
 
 staple_box.o: staple_box.cpp staple_box.h
 	$(CXX) $(CXXFLAGS) $(CXXINCLUDE) -c staple_box.cpp

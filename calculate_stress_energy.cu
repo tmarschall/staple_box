@@ -211,13 +211,13 @@ __global__ void avg_cont_velo(int nStaples, double *pdFt, int *pnContacts, doubl
   int thid = threadIdx.x;
   int nPID = thid + blockIdx.x * blockDim.x;
   int nStride = blockDim.x / 2;
-  int offset = nStride + 16;
+  int offset = nStride;
   if (nPID < nStaples) {
     if (thid < nStride) {
       sMem[thid] = pdFt[nPID] / pdMOI[nPID] + pdFt[nPID + nStride] / pdMOI[nPID + nStride];
     }
     else {
-      sMem[thid + 16] = double(pnContacts[nPID] + pnContacts[nPID - nStride]);
+      sMem[thid] = double(pnContacts[nPID] + pnContacts[nPID - nStride]);
     }
     __syncthreads();
 

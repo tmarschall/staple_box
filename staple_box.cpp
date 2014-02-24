@@ -490,6 +490,7 @@ Staple_Box::~Staple_Box()
   cudaFreeHost(h_pnMemID);
   cudaFreeHost(h_bNewNbrs);
   cudaFreeHost(h_pfSE);
+  cudaFreeHost(h_pdSE);
   delete[] h_pdFx;
   delete[] h_pdFy;
   delete[] h_pdFt;
@@ -539,6 +540,7 @@ Staple_Box::~Staple_Box()
   cudaFree(d_pnAdjCells);
   cudaFree(d_pnNPP);
   cudaFree(d_pnNbrList);
+  cudaFree(d_pdBlockSE);
 #if GOLD_FUNCS == 1
   delete[] g_pdX;
   delete[] g_pdY;
@@ -683,6 +685,7 @@ void Staple_Box::display(bool bParticles, bool bCells, bool bNeighbors, bool bSt
 	       << h_pdFt[p] << ") " << h_pnContacts[p] << "\n";
 	  dAV += h_pdFt[p] / h_pdMOI[p];
 	}
+      dAV /= m_nStaples;
       cout << endl << "Total contacts: " << m_pnTotContacts << endl;
       cout << "Average angular velocity: " << m_pfAvgAngVelo << " " << dAV << endl;
       cout << "Energy: " << *m_pfEnergy << endl;

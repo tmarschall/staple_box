@@ -195,7 +195,6 @@ class Staple_Box
   double calculate_packing();
   
   void save_positions(long unsigned int nTime);
-  void save_staple_forces(long unsigned int nTime);
   void save_spherocyl_positions(long unsigned int nTime);
   void strain_step(long unsigned int nTime, bool bSvStress = 0, bool bSvPos = 0, bool bSvF = 0);
   void shrink_step(double dShrinkStep, FILE *pOutfSrk, FILE *pOutfAVC, bool bSave = 1);
@@ -242,6 +241,8 @@ class Staple_Box
 #endif
 
   void display(bool bParticles = 1, bool bCells = 1, bool bNbrs = 1, bool bStress = 1);
+  
+  void save_staple_forces(long unsigned int nTime);
 
   void set_gamma(double dGamma) { m_dGamma = dGamma; }
   void set_total_gamma(double dTotalGamma) { m_dTotalGamma = dTotalGamma; }
@@ -249,6 +250,12 @@ class Staple_Box
   void set_strain(double dStrain) { m_dStrainRate = dStrain; }
   void set_data_dir(std::string strDataDir) { m_strDataDir = strDataDir; }
   void set_se_file(std::string strFileSE) { m_strFileSE = strFileSE; }
+
+  double* getFx() { return h_pdFx; }
+  double* getFy() { return h_pdFy; }
+  double* getFt() { return h_pdFt; }
+  double* getMOI() { return h_pdMOI; }
+  
 };
 
 #endif

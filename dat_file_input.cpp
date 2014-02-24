@@ -92,7 +92,7 @@ int DatFileInput::datGetRows()
 		string strLine;
 		getline(inf, strLine);
 	}
-	
+	inf.close();
 	//while loop returns an extra line with no data so we must subtract 1
 	return nRows - 1;
 }
@@ -117,7 +117,7 @@ int DatFileInput::datGetColumns()
 		nColumns += 1;
 		spaceIndex = strLine.find_first_of(" ", spaceIndex + 1);
 	}
-	
+	inf.close();
 	return nColumns;
 }
 
@@ -149,7 +149,7 @@ void DatFileInput::datFillArray()
 		
 		size_t leftSpace = -1;
 		size_t rightSpace = strLine.find_first_of(" ");
-		m_strArray[nRowIndex * m_nColumns + nColIndex] = strLine.substr(0, rightSpace);
+		m_strArray[nRowIndex * m_nColumns] = strLine.substr(0, rightSpace);
 		for (nColIndex = 1; nColIndex < m_nColumns; nColIndex++)
 		{
 			if (rightSpace == string::npos)  //should prevent seg fault if dat file has errors or varying number of columns
@@ -159,6 +159,7 @@ void DatFileInput::datFillArray()
 			m_strArray[nRowIndex * m_nColumns + nColIndex] = strLine.substr(leftSpace + 1, rightSpace - leftSpace - 1);
 		}
 	}
+	inf.close();
 }
 
 void DatFileInput::datDisplayArray()

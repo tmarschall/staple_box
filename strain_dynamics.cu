@@ -154,7 +154,7 @@ __global__ void euler_est(int nStaples, int *pnNPP, int *pnNbrList, double dL, d
 	      dDeltaYcom += dL * (double(dDeltaYcom < -0.5*dL) - double(dDeltaYcom > 0.5*dL));
 	      dDeltaXcom += dGamma * dDeltaYcom + s*nxA;
 	      dDeltaYcom += s*nyA;
-	      dFt += sData[2*blockDim.x+thid] += dDeltaXcom * dPfy - dDeltaYcom * dPfx;
+	      dFt += dDeltaXcom * dPfy - dDeltaYcom * dPfx;
 	      if (bCalcStress)
 		{
 		  if (nAdjPID > nPID)
@@ -591,6 +591,9 @@ void Staple_Box::strain_step(long unsigned int tTime, bool bSvStress, bool bSvPo
 	  cudaMemcpyAsync(h_pdY, d_pdY, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
 	  cudaMemcpyAsync(h_pdPhi, d_pdPhi, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
 	}
+      else if (bSaveF) {
+	cudaMemcpyAsync(h_pdPhi, d_pdPhi, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
+      }
       cudaThreadSynchronize();
       checkCudaError("Averaging angular velocity, summing contacts");
 
@@ -671,7 +674,7 @@ void Staple_Box::strain_step(long unsigned int tTime, bool bSvStress, bool bSvPo
 	//save_spherocyl_positions(tTime);
       }
       else if (bSaveF) {
-	cudaMemcpyAsync(h_pdPhi, d_pdPhi, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
+	//cudaMemcpyAsync(h_pdPhi, d_pdPhi, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
 	save_staple_forces(tTime);
       }
     } 
@@ -730,6 +733,8 @@ void Staple_Box::save_staple_forces(long unsigned int nTime)
       exit(1);
     }
 
+  //cudaMemcpy(h_pdDtCoeffSin, d_pdDtCoeffSin, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
+  //cudaMemcpy(h_pdDtCoeffCos, d_pdDtCoeffCos, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
   cudaMemcpy(h_pdFx, d_pdFx, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
   cudaMemcpy(h_pdFy, d_pdFy, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
   cudaMemcpy(h_pdFt, d_pdFt, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
@@ -737,10 +742,10 @@ void Staple_Box::save_staple_forces(long unsigned int nTime)
   for (int i = 0; i < m_nStaples; i++) {
     double dSinP = sin(h_pdPhi[i]);
     double dCosP = cos(h_pdPhi[i]);
-    double dDis = m_dGamma*(h_pdDtCoeffSin[i]*dSinP*dSinP + h_pdDtCoeffCos[i]*dCosP*dCosP);
+    double dDis = m_dStrainRate*(h_pdDtCoeffSin[i]*dSinP*dSinP + h_pdDtCoeffCos[i]*dCosP*dCosP);
     fprintf(pOutfF, "%.14g %.14g %.14g %.14g\n", h_pdFx[i], h_pdFy[i], h_pdFt[i], h_pdFt[i]/h_pdMOI[i] - dDis);
   }
-  
+  fclose(pOutfF);
 }
 
 void Staple_Box::save_spherocyl_positions(long unsigned int nTime)
@@ -898,6 +903,11 @@ void Staple_Box::run_strain(double dStartGamma, double dStopGamma, double dSvStr
 	    break;
 	  }
       }
+  }
+
+  if (bSaveF) {
+    cudaMemcpy(h_pdDtCoeffSin, d_pdDtCoeffSin, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_pdDtCoeffCos, d_pdDtCoeffCos, m_nStaples*sizeof(double), cudaMemcpyDeviceToHost);
   }
 
   // Run strain for specified number of steps
